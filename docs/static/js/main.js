@@ -10,11 +10,13 @@ const METHODS = [
   { key: "ours", label: "X-Splatter", ours: true },
 ];
 const depth = { key: "depth", label: "Depth", ext: "png" };
+// Depth tab named after the clip it shows (the paper renders depth for case 3 only).
+const depthOf = (clip) => ({ ...depth, label: `Depth (${clip})` });
 const DATASETS = [
   { dir: "waymo", label: "Waymo",
-    scenes: [{ key: "dynamic", label: "Dynamic" }, { key: "crowded", label: "Crowded" }, { key: "static", label: "Static" }, depth] },
+    scenes: [{ key: "case1", label: "Downtown traffic" }, { key: "case2", label: "Parked cars" }, { key: "case3", label: "Moving van" }, depthOf("Moving van")] },
   { dir: "nuscenes", label: "nuScenes (zero-shot)",
-    scenes: [{ key: "easier", label: "Easier" }, { key: "typical", label: "Typical" }, { key: "harder", label: "Harder" }, depth] },
+    scenes: [{ key: "case1", label: "Crosswalk" }, { key: "case2", label: "Bus lane" }, { key: "case3", label: "Wet multi-lane road" }, depthOf("Wet multi-lane road")] },
   { dir: "av2", label: "Argoverse 2 (zero-shot)",
     scenes: [{ key: "dynamic", label: "Dynamic" }, { key: "crowded", label: "Crowded" }, { key: "near-static", label: "Near-static" }, depth] },
 ];
