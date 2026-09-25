@@ -71,8 +71,8 @@
 
   <section class="wrap" id="abstract">
     <h2>Abstract</h2>
-    <p>Feed-forward scene reconstruction is a core component of autonomous driving, enabling scalable simulation, world modeling, and closed-loop reinforcement learning. We present X-Splatter, a surround-view, feed-forward 4D Gaussian Splatting (4DGS) framework that processes all surround cameras jointly on a VGGT-&Omega; backbone, with cross-camera attention throughout the network. It introduces two key components: Depth Anchoring Fine-tuning (DAF), which shifts geometry from relative to metric space, and Static&ndash;Dynamic Decomposition Learning (SDDL), which combines dynamic gating, static-promoting regularization, and intermediate-frame supervision to discourage decomposition shortcuts and support velocity learning, without bounding boxes, tracklets, or optical-flow supervision.</p>
-    <p>Trained and evaluated on all surrounding views, including the side views that share the least content with the front camera, X-Splatter achieves state-of-the-art full-scene and dynamic-region novel-view synthesis and the lowest metric-depth RMSE on the Waymo Open Dataset. It also achieves the lowest cross-view 3D error among all evaluated methods, indicating better geometric agreement across adjacent cameras. The same model generalizes zero-shot to nuScenes and Argoverse&nbsp;2, with state-of-the-art rendering and metric-depth accuracy on both.</p>
+    <p>Feed-forward scene reconstruction is a core component of autonomous driving, enabling scalable simulation, world modeling, and closed-loop reinforcement learning. We present X-Splatter, a surround-view, feed-forward 4D Gaussian Splatting (4DGS) framework that processes all surround cameras jointly on a VGGT-&Omega; backbone, with cross-camera attention throughout the network. It introduces two key components: Depth Anchoring Fine-tuning (DAF), which shifts geometry from relative to metric space, and Static&ndash;Dynamic Decomposition Learning (SDDL), which combines dynamic gating, static-promoting regularization, and intermediate-frame supervision to alleviate static&ndash;dynamic conflation and enhance motion learning. X-Splatter is a fully self-supervised system, without requiring labeled bounding boxes, tracklets, or optical-flow supervision.</p>
+    <p>Trained and evaluated on all surrounding views, including the side/rear views that share the least content with the front camera, X-Splatter achieves state-of-the-art full-scene and dynamic-only novel-view synthesis and the lowest metric-depth RMSE on the Waymo Open Dataset. It also achieves the lowest cross-view 3D error among the evaluated baselines, indicating better geometric agreement across adjacent cameras. The same model generalizes zero-shot to nuScenes and Argoverse&nbsp;2, with state-of-the-art rendering and metric-depth accuracy on both.</p>
   </section>
 
   <section class="wrap" id="method">
@@ -152,7 +152,7 @@
         <thead>
           <tr><th rowspan="3">Method</th><th colspan="3">Waymo &rarr; nuScenes</th><th colspan="3">Waymo &rarr; Argoverse&nbsp;2</th></tr>
           <tr><th rowspan="2">PSNR &uarr;</th><th colspan="2">Depth RMSE (m) &darr;</th><th rowspan="2">PSNR &uarr;</th><th colspan="2">Depth RMSE (m) &darr;</th></tr>
-          <tr><th>metric</th><th>affine</th><th>metric</th><th>affine</th></tr>
+          <tr><th>metric</th><th>affine-aligned</th><th>metric</th><th>affine-aligned</th></tr>
         </thead>
         <tbody>
           <tr class="group"><td colspan="7">All cameras</td></tr>
