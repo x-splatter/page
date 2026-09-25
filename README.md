@@ -2,6 +2,10 @@
 
 Feed-Forward Metric 4D Gaussian Splatting for Surround-View Driving Scenes.
 
+**Code: to be added.** Training and evaluation code will be released in this repository.
+
+Project page: https://x-splatter.github.io/page/
+
 The project page lives in [`docs/`](docs/) and is served by GitHub Pages
 (Settings → Pages → Deploy from a branch → `main` / `docs`).
 
