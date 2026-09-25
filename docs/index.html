@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X-Splatter</title>
+  <meta name="description" content="X-Splatter: feed-forward metric 4D Gaussian Splatting for surround-view driving scenes.">
+  <meta property="og:title" content="X-Splatter: Feed-Forward Metric 4D Gaussian Splatting for Surround-View Driving Scenes">
+  <meta property="og:description" content="One forward pass turns five-camera driving video into metric, dynamic 4D Gaussians.">
+  <meta property="og:image" content="static/images/teaser.jpg">
+  <link rel="icon" href="static/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="venue">Under review</p>
+    <h1><span class="brand">X-Splatter</span>: Feed-Forward Metric 4D Gaussian Splatting for Surround-View Driving Scenes</h1>
+
+    <!-- AUTHORS: anonymous while the paper is under double-blind review.
+         To de-anonymize, replace this block with e.g.
+         <p class="authors"><a href="https://...">First Author</a><sup>1</sup>, ...</p>
+         <p class="affils"><sup>1</sup>Affiliation</p> -->
+    <p class="authors">Anonymous authors</p>
+
+    <nav class="links" aria-label="Paper links">
+      <a class="btn disabled" aria-disabled="true" title="Coming soon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6zM14 3v5h5"/></svg>Paper</a>
+      <a class="btn disabled" aria-disabled="true" title="Coming soon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/></svg>arXiv</a>
+      <a class="btn disabled" aria-disabled="true" title="Coming soon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l-6-6 6-6M15 6l6 6-6 6"/></svg>Code</a>
+      <a class="btn" href="#bibtex"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10M7 12h10M7 17h6M4 3h16v18H4z"/></svg>BibTeX</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="wrap wide">
+    <figure class="teaser">
+      <img src="static/images/teaser.jpg" alt="X-Splatter overview: five surround-view cameras in, metric 4D Gaussians out, rendered from a new ego pose as RGB, metric depth, and moving Gaussians only." width="2400" height="952">
+      <figcaption>From five surround-view cameras, X-Splatter reconstructs a metric, dynamic 4D Gaussian scene in a single forward pass, then renders it from a viewpoint off the recorded trajectory. No LiDAR is needed at inference.</figcaption>
+    </figure>
+  </section>
+
+  <section class="wrap">
+    <ul class="stats" aria-label="Headline results">
+      <li><strong>27.45<small> dB</small></strong><span>Full-image PSNR on Waymo, all five cameras</span></li>
+      <li><strong>23.44<small> dB</small></strong><span>Dynamic-region PSNR on Waymo</span></li>
+      <li><strong>3.55<small> m</small></strong><span>Metric depth RMSE, no test-time alignment</span></li>
+      <li><strong>0.72<small> m</small></strong><span>Cross-camera 3D error, vs. 2.51&nbsp;m for STORM</span></li>
+    </ul>
+  </section>
+
+  <section class="wrap" id="abstract">
+    <h2>Abstract</h2>
+    <p>Feed-forward scene reconstruction has become a core component of autonomous driving. It provides an efficient and scalable way to reconstruct scenes, which supports major downstream tasks including simulation, world modeling, and closed-loop reinforcement learning. We present X-Splatter, a surround-view, feed-forward 4D Gaussian Splatting (4DGS) framework. X-Splatter is built on a VGGT backbone and introduces three key components: a Depth Anchoring Fine-tuning (DAF) process that shifts geometry from relative space to metric space; a Cross-camera Fusion Module (CFM) that applies cross-camera attention throughout the network to enforce consistency across views; and a Static&ndash;Dynamic Decomposition Learning (SDDL) strategy that combines dynamic gating, static-promoting regularization, and intermediate-frame supervision to discourage decomposition shortcuts and support velocity learning, without bounding boxes, tracklets, or optical-flow supervision.</p>
+    <p>X-Splatter is trained and evaluated on all surrounding views, including the side views that share the least content with the front camera. It achieves state-of-the-art full-surround reconstruction on the Waymo Open Dataset, in both full-scene and dynamic-region novel-view synthesis, with the lowest metric-depth RMSE. The same model also generalizes zero-shot to nuScenes and Argoverse&nbsp;2, achieving the best rendering PSNR and metric-depth accuracy on both datasets.</p>
+  </section>
+
+  <section class="wrap" id="method">
+    <h2>Method</h2>
+    <figure>
+      <img src="static/images/method.jpg" alt="Framework: DAF fine-tunes and freezes VGGT-Omega for metric depth; CFM adds cross-camera attention; SDDL splits Gaussians into shared static and warped dynamic parts." width="2400" height="922" loading="lazy">
+    </figure>
+    <div class="cards">
+      <article class="card c-daf">
+        <h3><span class="tag">DAF</span>Depth Anchoring Fine-tuning</h3>
+        <p>Adapts a pretrained VGGT-&Omega; backbone from relative to metric depth, using sparse LiDAR plus a frozen teacher for the pixels LiDAR misses. The geometry is then frozen, so motion learning cannot trade depth for motion.</p>
+      </article>
+      <article class="card c-cfm">
+        <h3><span class="tag">CFM</span>Cross-camera Fusion Module</h3>
+        <p>Lets each camera attend to all cameras at neighboring frames, so an object seen only partly in one view draws on the evidence another view provides.</p>
+      </article>
+      <article class="card c-sddl">
+        <h3><span class="tag">SDDL</span>Static&ndash;Dynamic Decomposition</h3>
+        <p>A per-Gaussian gate splits shared static content from velocity-warped dynamic content. Static-promoting regularization and intermediate-frame supervision stop the model from explaining the scene with motion it does not have, without boxes, tracks, or flow labels.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="wrap" id="videos">
+    <h2>Videos</h2>
+    <!-- VIDEOS: drop H.264 .mp4 files in static/videos/ and list them in static/js/main.js (VIDEOS). -->
+    <div id="video-grid" class="video-grid"></div>
+    <p id="video-empty" class="placeholder">Rendered novel-view and novel-time videos are coming soon.</p>
+  </section>
+
+  <section class="wrap" id="results">
+    <h2>Novel-view synthesis on Waymo</h2>
+    <p>Every method is scored across all five Waymo cameras, including the side views that share the least content with the front camera. Depth is the rendered depth, scored in meters directly (metric) or after a per-clip scale-and-shift fit (affine-aligned).</p>
+    <div class="table-scroll">
+      <table class="results">
+        <thead>
+          <tr><th rowspan="2">Method</th><th colspan="2">Full image</th><th colspan="2">Dynamic region</th><th colspan="2">Depth RMSE (m) &darr;</th></tr>
+          <tr><th>PSNR &uarr;</th><th>SSIM &uarr;</th><th>PSNR &uarr;</th><th>SSIM &uarr;</th><th>metric</th><th>affine-aligned</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>STORM</td><td>22.66</td><td>0.680</td><td>20.82</td><td>0.524</td><td>6.67</td><td>5.46</td></tr>
+          <tr><td>DGGT<sup>&dagger;</sup></td><td>20.28</td><td>0.576</td><td>18.95</td><td>0.447</td><td>17.62</td><td>5.03</td></tr>
+          <tr class="ours"><td>X-Splatter</td><td><b>27.45</b></td><td><b>0.814</b></td><td><b>23.44</b></td><td><b>0.686</b></td><td><b>3.55</b></td><td><b>3.33</b></td></tr>
+          <tr class="ours"><td>X-Splatter + weak sup.</td><td><b>27.48</b></td><td><b>0.814</b></td><td><b>23.96</b></td><td><b>0.709</b></td><td><b>3.53</b></td><td><b>3.32</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">STORM uses all five cameras as input; DGGT is a single-camera model run once per camera. <sup>&dagger;</sup>DGGT predicts relative geometry and aligns its camera trajectory to ground-truth poses for rendering. &ldquo;Weak sup.&rdquo; adds a region-weighted RGB loss on moving-object masks from 3D boxes. Top two per column in bold.</p>
+  </section>
+
+  <section class="wrap wide" id="qualitative">
+    <h2 class="narrow">Qualitative comparison</h2>
+    <p class="narrow">Held-out front-camera views. Waymo is in domain; nuScenes and Argoverse&nbsp;2 are zero-shot, with no training on either dataset. Depth uses a shared 0&ndash;80&nbsp;m colormap; white marks sky and pixels without LiDAR or a rendered value.</p>
+    <div class="qual" data-qual>
+      <div class="tabs" role="tablist" aria-label="Dataset" data-datasets></div>
+      <div class="tabs sub" role="tablist" aria-label="Scene" data-scenes></div>
+      <div class="qual-grid" data-grid></div>
+    </div>
+  </section>
+
+  <section class="wrap" id="consistency">
+    <h2>Cross-camera consistency</h2>
+    <p>Where two cameras overlap, a consistent reconstruction should place the same surface at the same 3D position from both. Each panel unprojects the two cameras' own depth over their shared field of view, seen from above; LiDAR is in black. Over 202 Waymo scenes, X-Splatter places the same surface 0.72&nbsp;m apart on average, against 2.51&nbsp;m for STORM.</p>
+    <figure>
+      <img src="static/images/xcam.jpg" alt="Top-down view of the front-right (cyan) and side-right (orange) cameras' depth in their overlap; X-Splatter's two colors coincide with LiDAR while STORM and DGGT disagree." width="2000" height="1257" loading="lazy">
+      <figcaption>Front-right (cyan) and side-right (orange) depth in their overlap, in the front-right camera frame. Panel labels give the mean / median distance between the two cameras' estimates.</figcaption>
+    </figure>
+  </section>
+
+  <section class="wrap" id="zeroshot">
+    <h2>Zero-shot generalization</h2>
+    <p>The Waymo-trained model is evaluated on nuScenes (six cameras) and Argoverse&nbsp;2 (seven cameras) with no further training, over 100 scenes per dataset.</p>
+    <div class="table-scroll">
+      <table class="results">
+        <thead>
+          <tr><th rowspan="3">Method</th><th colspan="3">Waymo &rarr; nuScenes</th><th colspan="3">Waymo &rarr; Argoverse&nbsp;2</th></tr>
+          <tr><th rowspan="2">PSNR &uarr;</th><th colspan="2">Depth RMSE (m) &darr;</th><th rowspan="2">PSNR &uarr;</th><th colspan="2">Depth RMSE (m) &darr;</th></tr>
+          <tr><th>metric</th><th>affine</th><th>metric</th><th>affine</th></tr>
+        </thead>
+        <tbody>
+          <tr class="group"><td colspan="7">All cameras</td></tr>
+          <tr><td>STORM</td><td>17.98</td><td>10.92</td><td>8.51</td><td>16.21</td><td>18.65</td><td>13.28</td></tr>
+          <tr><td>DGGT</td><td>18.26</td><td>9.79</td><td><b>6.36</b></td><td>16.03</td><td>36.49</td><td><b>10.65</b></td></tr>
+          <tr class="ours"><td>X-Splatter</td><td><b>20.09</b></td><td><b>8.38</b></td><td>6.76</td><td>16.70</td><td>13.53</td><td>11.84</td></tr>
+          <tr class="ours"><td>X-Splatter + weak sup.</td><td>19.91</td><td><b>8.38</b></td><td>6.80</td><td><b>16.75</b></td><td><b>13.37</b></td><td>11.64</td></tr>
+          <tr class="group"><td colspan="7">Front camera</td></tr>
+          <tr><td>STORM</td><td>19.08</td><td>9.62</td><td>8.51</td><td>17.67</td><td>19.93</td><td>16.54</td></tr>
+          <tr><td>DGGT</td><td>22.27</td><td>10.33</td><td><b>6.36</b></td><td>16.27</td><td>86.08</td><td>13.30</td></tr>
+          <tr class="ours"><td>X-Splatter</td><td><b>23.00</b></td><td>8.61</td><td>6.60</td><td><b>17.91</b></td><td>16.63</td><td>13.54</td></tr>
+          <tr class="ours"><td>X-Splatter + weak sup.</td><td>22.80</td><td><b>8.58</b></td><td>6.60</td><td>17.82</td><td><b>16.43</b></td><td><b>13.01</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Best per column within each camera block in bold, ties included.</p>
+  </section>
+
+  <section class="wrap" id="bibtex">
+    <h2>BibTeX</h2>
+    <div class="bib">
+      <button type="button" class="copy" data-copy="#bib-text">Copy</button>
+<pre id="bib-text"><code>@article{xsplatter2026,
+  title   = {X-Splatter: Feed-Forward Metric 4D Gaussian Splatting
+             for Surround-View Driving Scenes},
+  author  = {Anonymous},
+  journal = {Under review},
+  year    = {2026}
+}</code></pre>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <p>X-Splatter project page.</p>
+</footer>
+
+<script src="static/js/main.js"></script>
+</body>
+</html>
