@@ -16,23 +16,6 @@
   --maxw-wide: 1120px;
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0f141b;
-    --surface: #161d27;
-    --surface-2: #1d2632;
-    --text: #e6ebf2;
-    --muted: #9aa6b6;
-    --border: #2a3441;
-    --accent: #7fb2ea;
-    --accent-soft: #1b2a3c;
-    --ours: #16263a;
-    --daf: #7fb2ea;
-    --cfm: #5fcab8;
-    --sddl: #b89ae6;
-    color-scheme: dark;
-  }
-}
 :root[data-theme="dark"] {
   --bg: #0f141b;
   --surface: #161d27;
@@ -88,6 +71,25 @@ p { margin: 0 0 14px; }
 .btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .btn.disabled { background: var(--surface-2); color: var(--muted); cursor: default; }
 .btn.disabled:hover { opacity: 1; }
+
+/* Theme toggle */
+.theme-toggle {
+  position: fixed; top: 14px; right: 14px; z-index: 50;
+  width: 40px; height: 40px; padding: 0; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); cursor: pointer;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  transition: background .15s ease, border-color .15s ease;
+}
+.theme-toggle:hover { background: var(--surface-2); }
+.theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-toggle svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* show the theme you would switch TO */
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
 /* Figures */
 figure { margin: 0; }
