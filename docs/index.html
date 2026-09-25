@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
   <title>X-Splatter</title>
   <meta name="description" content="X-Splatter: feed-forward metric 4D Gaussian Splatting for surround-view driving scenes.">
   <meta property="og:title" content="X-Splatter: Feed-Forward Metric 4D Gaussian Splatting for Surround-View Driving Scenes">
@@ -18,7 +19,7 @@
     (function () {
       try {
         var t = localStorage.getItem("xs-theme");
-        if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
       } catch (e) {}
     })();
   </script>
